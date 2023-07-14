@@ -1,0 +1,449 @@
+openapi: 3.0.0
+info:
+  version: 0.0.1
+  title: 'Auction System Swagger Docs'
+  description: 'Auction System Swagger Docs for Jitera'
+servers:
+  - description: Local development
+    url: 'http://localhost:3000'
+paths:
+  /healthcheck/readiness:
+    get:
+      tags:
+        - healthcheck
+      operationId: getReadiness
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Healthcheck'
+  /auth/login:
+    post:
+      tags:
+        - Login
+      operationId: authLogin
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Auth'
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  access_token:
+                    type: string
+        404:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error404Response'
+        401:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error401Response'
+        500:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error500Response'
+  /auth/register:
+    post:
+      tags:
+        - Register
+      operationId: authRegister
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Auth'
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+        400:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error400Response'
+  /auth/logout:
+    post:
+      tags:
+        - Logout
+      operationId: authLogout
+      parameters:
+        - $ref: '#/components/parameters/authorization'
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+  /items:
+    post:
+      tags:
+        - Item
+      operationId: postItem
+      description: Add a new item
+      parameters:
+        - $ref: '#/components/parameters/authorization'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RequestAddItem'
+      responses:
+        201:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Item'
+    get:
+      tags:
+        - Item
+      operationId: getItems
+      description: Get List of Items, can query based on item_status
+      parameters:
+        - $ref: '#/components/parameters/authorization'
+        - $ref: '#/components/parameters/itemStatus'
+      responses:
+        200:
+          description: return 200 when successful
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - data
+                properties:
+                  data:
+                    type: array
+                    nullable: true
+                    items:
+                      $ref: '#/components/schemas/Item'
+    patch:
+        tags:
+        - Item
+        operationId: patchItem
+        description: To patch item become published
+        parameters:
+          - $ref: '#/components/parameters/authorization'
+        requestBody:
+          required: true
+          content: 
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PatchItem'
+        responses:
+          200:
+            description: OK
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/Item'
+          404:
+            description: Return 404 when item is not found with given item id
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/Error404Response'
+  /bid:
+    post:
+      tags:
+        - Bid
+      operationId: bidItem
+      parameters:
+        - $ref: '#/components/parameters/authorization'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+                $ref: '#/components/schemas/Bid'
+      responses:
+        201:
+          description: OK
+        400:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error400Response'
+        404:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error404Response'
+  /deposit:
+    post:
+      tags:
+        - Deposit
+      operationId: depositBalance
+      parameters:
+        - $ref: '#/components/parameters/authorization'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+                type: object
+                properties:
+                  amount:
+                    type: number
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  balance:
+                    type: number
+
+  /errors/{error_code}:
+    get:
+      tags:
+        - error
+        - example
+      operationId: getErrorExample
+      parameters:
+        - name: error_code
+          in: path
+          description: Error HTTP code
+          required: true
+          schema:
+            type: string
+            enum: ['200', '400', '403', '422', '500']
+      responses:
+        200:
+          description: default response, instruction to use this endpoint
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+        400:
+          description: example error 400 response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error400Response'
+        403:
+          description: example error 403 response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error403Response'
+        404:
+          description: example error 404 response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error404Response'
+        422:
+          description: example error 422 response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error422Response'
+        500:
+          description: example error 500 response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error500Response'
+
+components:
+  parameters:
+    authorization:
+      name: Authorization
+      in: header
+      required: true
+      schema:
+        type: string
+    itemStatus:
+      name: item_status
+      in: query
+      schema:
+        type: string
+  schemas:
+    Item:
+      type: object
+      required:
+        - item_id
+        - item_name
+        - current_price
+        - expired_at
+        - item_status
+      properties:
+        item_name:
+          type: string
+        item_start_price:
+          type: number
+        item_time_window:
+          type: number
+    RequestAddItem:
+      type: object
+      required:
+        - item_name
+        - item_start_price
+        - item_time_window
+      properties:
+        item_name:
+          type: string
+        item_start_price:
+          type: number
+        item_time_window:
+          type: number
+    PatchItem:
+      type: object
+      properties:
+        item_id:
+          type: number
+    Bid:
+      type: object
+      required:
+        - bid_item_id
+        - bid_price
+    Auth:
+      type: object
+      required:
+        - email
+        - password
+      properties:
+        email:
+          type: string
+        password:
+          type: string
+    Healthcheck:
+      type: object
+      required:
+        - status
+      properties:
+        status:
+          type: string
+          example: 'OK'
+    Error400Response:
+      type: object
+      required:
+        - error_code
+        - message
+      properties:
+        error_code:
+          type: string
+          enum:
+            - API_VALIDATION_ERROR
+            - INVALID_JSON_FORMAT
+            - EMAIL_ALREADY_EXIST
+            - BID_TIME_OVER
+            - BALANCE_NOT_ENOUGH
+        message:
+          type: string
+        errors:
+          $ref: '#/components/schemas/ArrayOfErrors'
+    Error403Response:
+      type: object
+      required:
+        - error_code
+        - message
+      properties:
+        error_code:
+          type: string
+          enum:
+            - REQUEST_FORBIDDEN_ERROR
+        message:
+          type: string
+        errors:
+          $ref: '#/components/schemas/ArrayOfErrors'
+    Error401Response:
+      type: object
+      required:
+        - error_code
+        - message
+      properties:
+        error_code:
+          type: string
+        message:
+          type: string
+        errors:
+          $ref: '#/components/schemas/ArrayOfErrors'
+    Error404Response:
+      type: object
+      required:
+        - error_code
+        - message
+      properties:
+        error_code:
+          type: string
+          enum:
+            - USER_NOT_FOUND
+            - ITEM_NOT_FOUND
+        message:
+          type: string
+        errors:
+          $ref: '#/components/schemas/ArrayOfErrors'
+    Error422Response:
+      type: object
+      required:
+        - error_code
+        - message
+      properties:
+        error_code:
+          type: string
+          enum:
+            - GENERATE_CHECKOUT_URL_ERROR
+            - DUPLICATE_PAYMENT_ERROR
+        message:
+          type: string
+        errors:
+          $ref: '#/components/schemas/ArrayOfErrors'
+    Error500Response:
+      type: object
+      required:
+        - error_code
+        - message
+      properties:
+        error_code:
+          type: string
+          enum:
+            - INTERNAL_SERVER_ERROR
+        message:
+          type: string
+        errors:
+          $ref: '#/components/schemas/ArrayOfErrors'
+    ArrayOfErrors:
+      nullable: true
+      type: array
+      items:
+        oneOf:
+          - type: string
+          - type: object

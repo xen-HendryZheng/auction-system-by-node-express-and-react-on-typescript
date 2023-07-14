@@ -1,0 +1,26 @@
+version: '3.7'
+services:
+  postgres:
+    image: 'postgres:10.7'
+    environment:
+      - POSTGRES_USER=testuser
+      - POSTGRES_PASSWORD=testpass
+      - POSTGRES_DB=auction-system
+    ports:
+      - 5432:5432
+    volumes:
+      - ./postgres-data:/var/lib/postgresql/data
+  web:
+    build:
+      context: .
+      dockerfile: dev.Dockerfile
+    links:
+      - postgres
+    container_name: jtr-auction-express
+    ports:
+      - 3000:3000
+    environment:
+      - PGHOST=postgres
+      - PGHOST_MIGRATION=postgres
+    volumes:
+      - ./:/app
