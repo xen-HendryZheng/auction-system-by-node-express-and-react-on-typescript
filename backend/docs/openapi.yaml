@@ -85,6 +85,23 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error400Response'
+  /auth/profile:
+    get:
+      tags:
+        - Profile
+      operationId: getAuthProfile
+      parameters:
+        - $ref: '#/components/parameters/authorization'
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  balance:
+                    type: number
   /auth/logout:
     post:
       tags:

@@ -1,7 +1,7 @@
 import { createApp } from './app';
 import { connectToDatabase, closeDatabaseConnection } from './connect';
 
-const port = 3000;
+const port = process.env.PORT || 3000;
 
 (async () => {
     await connectToDatabase();

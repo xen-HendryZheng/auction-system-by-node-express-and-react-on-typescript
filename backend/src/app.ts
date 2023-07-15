@@ -4,6 +4,7 @@ import * as OpenApiValidator from 'express-openapi-validator';
 import { init } from './init';
 import { errorHandler } from './middlewares/handle-error';
 import * as httpContext from 'express-http-context';
+import cors from 'cors';
 
 async function setupRoutes(app: Application) {
     const { authController, itemController, depositController, healthcheckController, bidController } = await init();
@@ -17,6 +18,7 @@ async function setupRoutes(app: Application) {
 
 export async function createApp(): Promise<Application> {
     const app = express();
+    app.use(cors());
     app.use(httpContext.middleware);
     // Enable JSON body parsing
     app.use(express.json());

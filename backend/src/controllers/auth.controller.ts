@@ -3,6 +3,7 @@ import * as jwt from 'jsonwebtoken';
 import { AuthService } from '../services/auth.service';
 import { JWT_DURATION_HOUR, JWT_SECRET } from '../config';
 import moment from 'moment';
+import { authenticateToken } from '../middlewares/auth.middleware';
 export class AuthController {
     private readonly authService: AuthService;
 
@@ -13,6 +14,7 @@ export class AuthController {
         this.router = Router();
         this.router.post('/login', this.login.bind(this));
         this.router.post('/register', this.register.bind(this));
+        this.router.get('/profile', authenticateToken, this.profile.bind(this));
         this.router.post('/logout', this.logout.bind(this));
     }
 
@@ -33,6 +35,24 @@ export class AuthController {
             const expiryJwt = moment().add(JWT_DURATION_HOUR, 'hours');
             const token = jwt.sign({ user_id: user.userId, user_email: user.userEmail, expiry: expiryJwt }, JWT_SECRET as string);
             return res.status(200).json({ access_token: token });
+        } catch (err) {
+            console.log(err);
+            return next(err);
+        }
+
+    }
+
+    public async profile(req: Request, res: Response, next: NextFunction): Promise<Response | void> {
+        try {
+            const [user, err] = await this.authService.getUser();
+            if (err) {
+                return next(err);
+            }
+            if (!user) {
+                return res.status(401).json({ message: 'Invalid credentials' });
+            }
+            console.log(user);
+            return res.status(200).json({ balance: Number(user.userBalance) || 0 });
         } catch (err) {
             console.log(err);
             return next(err);
