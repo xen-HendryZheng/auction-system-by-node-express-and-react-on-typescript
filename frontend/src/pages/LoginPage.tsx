@@ -31,11 +31,10 @@ const LoginPage = () => {
     e.preventDefault();
     AuthService.login(email, password)
       .then(response => {
-        console.log(response);
-        if (response.access_token) {
+        if (response.data.access_token) {
           const user = {
             email,
-            accessToken: response.access_token
+            accessToken: response.data.access_token
           };
           login(user);
           setVariant('success')
@@ -44,9 +43,7 @@ const LoginPage = () => {
           )
           setEmail('')
           setPassword('')
-          setTimeout(() => {
-            navigate('/dashboard', { state: { email } })
-          }, 3000)
+          navigate('/', {replace: true})
         } else {
           setVariant('danger')
           setMessage(`Login failed ! ${response.data.message}`)

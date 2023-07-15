@@ -7,6 +7,10 @@ class UserService {
         return axiosInstance
             .get(API_ENDPOINT.PROFILE);
     };
+    deposit = (amount: number) => {
+        return axiosInstance
+            .post(API_ENDPOINT.DEPOSIT, { amount});
+    };
 }
 
 // eslint-disable-next-line import/no-anonymous-default-export

@@ -1,6 +1,21 @@
+import { useEffect, useState } from 'react'
 import { Button, Table } from 'react-bootstrap'
+import ItemService from '../../services/ItemService'
+import ItemOngoingRow from '../../components/ItemOngoingRow';
 
 const OngoingBidTab = () => {
+
+  const [items, setItems] = useState([]);
+  useEffect(() => {
+    console.log('loaded ogoing bid tab')
+    getItems();
+  },[])
+  const getItems = async () => {
+    const results = await ItemService.getPublishedItems()
+    console.log(results);
+    setItems(results.data.data)
+  };
+
   return (
     <Table striped bordered hover>
       <thead>
@@ -13,33 +28,7 @@ const OngoingBidTab = () => {
         </tr>
       </thead>
       <tbody>
-        <tr>
-          <td>1</td>
-          <td>Blue Sapphire</td>
-          <td>$500</td>
-          <td>58m10s left</td>
-          <td>
-                <Button className='btn btn-primary'>Bid</Button>
-          </td>
-        </tr>
-        <tr>
-          <td>1</td>
-          <td>Blue Sapphire</td>
-          <td>$500</td>
-          <td>58m10s left</td>
-          <td>
-                <Button className='btn btn-primary'>Bid</Button>
-          </td>
-        </tr>
-        <tr>
-          <td>1</td>
-          <td>Blue Sapphire</td>
-          <td>$500</td>
-          <td>58m10s left</td>
-          <td>
-                <Button className='btn btn-primary'>Bid</Button>
-          </td>
-        </tr>
+        <ItemOngoingRow items={items}/>
       </tbody>
     </Table>
   )

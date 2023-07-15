@@ -13,7 +13,6 @@ const RegisterPage = () => {
 
   const handleEmailChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setEmail(event.target.value)
-    console.log(email)
   }
 
   const handlePasswordChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -34,7 +33,7 @@ const RegisterPage = () => {
           setEmail('')
           setPassword('')
           setTimeout(() => {
-            navigate('/login',{state: {emailRegistered: email}})
+            navigate('/',{state: {emailRegistered: email}})
           }, 10000)
         } else {
           setVariant('danger')

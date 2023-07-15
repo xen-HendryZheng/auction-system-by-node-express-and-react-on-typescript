@@ -9,16 +9,10 @@ class AuthService {
             .post(API_ENDPOINT.LOGIN, {
                 email,
                 password
-            })
-            .then(response => {
-                if (response.data.accessToken) {
-                    localStorage.setItem('user', JSON.stringify(response.data));
-                }
-
-                return response.data;
             });
     };
     register = (email: string, password: string) => {
+        console.log(axiosInstance.post)
         return axiosInstance
             .post(API_ENDPOINT.REGISTER, {
                 email,

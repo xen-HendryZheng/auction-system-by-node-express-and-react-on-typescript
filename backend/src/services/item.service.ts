@@ -22,6 +22,19 @@ export class ItemService {
     }
     return this.itemRepository.find();
   }
+  
+
+  getOwnItems(itemCreatedBy: number): Promise<Item[]> {
+    if (itemCreatedBy) {
+      const where = {
+        where: {
+          itemCreatedBy
+        }
+      }
+      return this.itemRepository.find(where);
+    }
+    return this.itemRepository.find();
+  }
 
   async publishItem(itemId: number): Promise<[Item, Error]> {
     const foundItem = await this.itemRepository.findOne({

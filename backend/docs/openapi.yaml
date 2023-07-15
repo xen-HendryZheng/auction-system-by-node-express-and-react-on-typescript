@@ -148,6 +148,7 @@ paths:
       parameters:
         - $ref: '#/components/parameters/authorization'
         - $ref: '#/components/parameters/itemStatus'
+        - $ref: '#/components/parameters/own'
       responses:
         200:
           description: return 200 when successful
@@ -309,6 +310,11 @@ components:
         type: string
     itemStatus:
       name: item_status
+      in: query
+      schema:
+        type: string
+    own:
+      name: own
       in: query
       schema:
         type: string

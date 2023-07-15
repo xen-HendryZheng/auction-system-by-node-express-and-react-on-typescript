@@ -16,15 +16,14 @@ import HeaderNav from './components/HeaderNav'
 
 function App () {
   const { user } = useContext(UserContext);
-  
+  console.log(user);
   return (
     <UserProvider>
-      {user ? <HeaderNav /> : ""}
+      <HeaderNav />
       <Routes>
-        <Route path='/' element={user ? <Navigate to='/dashboard' /> : <LoginPage />} />
         <Route path='/login' element={<LoginPage />} />
         <Route path='/register' element={<RegisterPage />} />
-        <Route path='/dashboard'
+        <Route path='/'
           element={
             <ProtectedRoute>
               <DashboardPage />

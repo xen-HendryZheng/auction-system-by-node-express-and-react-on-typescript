@@ -59,8 +59,14 @@ export class ItemController {
     }
     public async getItems(req: Request, res: Response, next: NextFunction): Promise<Response | void> {
         try {
-            const { item_status: itemStatus } = req.query;
-            const items = await this.itemService.getAllItems(itemStatus as string);
+            const { item_status: itemStatus, own = '' } = req.query;
+            const user = await getUserSession() as any;
+            let items = [];
+            if (own) {
+                items = await this.itemService.getOwnItems(user.user_id);
+            } else{
+                items = await this.itemService.getAllItems(itemStatus as string);
+            }
             const data: IItemResponse[] = items.map(item => {
                 const expiry = moment(item.itemPublishedAt).add(item.itemTimeWindow, 'hour').format();
                 return {

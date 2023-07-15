@@ -1,5 +1,4 @@
 import { Container, Row, Col, Tabs, Tab } from 'react-bootstrap'
-import HeaderNav from '../components/HeaderNav'
 import OngoingBidTab from './tabs/OngoingBidTab'
 import CompletedBidTab from './tabs/CompletedBidTab'
 
