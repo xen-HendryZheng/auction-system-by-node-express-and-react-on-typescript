@@ -8,9 +8,13 @@ import moment from 'moment';
 export interface IItemResponse {
     item_id: number;
     item_name: string;
+    start_price: number;
     current_price: number;
+    time_window: number;
     expired_at: string;
     item_status: string;
+    created_by: number;
+    owned_by: number;
 }
 
 export class ItemController {
@@ -47,9 +51,13 @@ export class ItemController {
             const response: IItemResponse = {
                 item_id: item.itemId,
                 item_name: item.itemName,
+                start_price: item.itemStartPrice,
                 current_price: item.itemEndPrice,
+                time_window: item.itemTimeWindow,
                 expired_at: null,
-                item_status: item.itemStatus
+                item_status: item.itemStatus,
+                created_by: item.itemCreatedBy,
+                owned_by: item.itemUserId
             }
             return res.status(201).json(response);
         } catch (err) {
@@ -62,26 +70,27 @@ export class ItemController {
             const { item_status: itemStatus, own = '' } = req.query;
             const user = await getUserSession() as any;
             let items = [];
-            if (own) {
-                items = await this.itemService.getOwnItems(user.user_id);
-            } else{
-                items = await this.itemService.getAllItems(itemStatus as string);
-            }
+            let userId = own ? user.user_id : '';
+            items = await this.itemService.getAllItems(itemStatus as string, userId);
             const data: IItemResponse[] = items.map(item => {
                 const expiry = moment(item.itemPublishedAt).add(item.itemTimeWindow, 'hour').format();
                 return {
                     item_id: item.itemId,
                     item_name: item.itemName,
+                    start_price: item.itemStartPrice,
                     current_price: item.itemEndPrice,
+                    time_window: item.itemTimeWindow,
                     expired_at: expiry,
-                    item_status: item.itemStatus
+                    item_status: item.itemStatus,
+                    created_by: item.itemCreatedBy,
+                    owned_by: item.itemUserId
                 }
             });
-            return res.status(200).json({data})
+            return res.status(200).json({ data })
         } catch (err) {
             return next(err);
         }
-        
+
     }
 
     public async patchItems(req: Request, res: Response, next: NextFunction): Promise<Response | void> {
@@ -95,9 +104,13 @@ export class ItemController {
             const response: IItemResponse = {
                 item_id: item.itemId,
                 item_name: item.itemName,
+                start_price: item.itemStartPrice,
                 current_price: item.itemEndPrice,
+                time_window: item.itemTimeWindow,
                 expired_at: expiry,
-                item_status: item.itemStatus
+                item_status: item.itemStatus,
+                created_by: item.itemCreatedBy,
+                owned_by: item.itemUserId
             }
             return res.status(200).json(response);
         } catch (err) {

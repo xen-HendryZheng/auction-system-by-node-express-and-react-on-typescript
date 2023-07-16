@@ -11,29 +11,17 @@ export class ItemService {
     return this.itemRepository.save(newItem);
   }
 
-  getAllItems(itemStatus?: string): Promise<Item[]> {
+  getAllItems(itemStatus?: string, userId?: number): Promise<Item[]> {
+    const where = [];
     if (itemStatus) {
-      const where = {
-        where: {
-          itemStatus
-        }
-      }
-      return this.itemRepository.find(where);
+      where.push({ itemStatus });
     }
-    return this.itemRepository.find();
-  }
-  
-
-  getOwnItems(itemCreatedBy: number): Promise<Item[]> {
-    if (itemCreatedBy) {
-      const where = {
-        where: {
-          itemCreatedBy
-        }
-      }
-      return this.itemRepository.find(where);
+    if (userId) {
+      where.push(
+        { itemCreatedBy: userId },
+        { itemUserId: userId });
     }
-    return this.itemRepository.find();
+    return this.itemRepository.find({ where });
   }
 
   async publishItem(itemId: number): Promise<[Item, Error]> {

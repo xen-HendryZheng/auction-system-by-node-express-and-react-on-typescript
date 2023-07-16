@@ -324,9 +324,13 @@ components:
       required:
         - item_id
         - item_name
+        - start_price
         - current_price
+        - time_window
         - expired_at
         - item_status
+        - created_by
+        - owned_by
       properties:
         item_name:
           type: string
