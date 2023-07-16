@@ -16,10 +16,10 @@ export class DepositService {
   }
 
   async getDepositByUser(userId: number, itemId?: number): Promise<Deposit[]> {
-    const where = [];
-    where.push ({ depositUserId: userId });
+    const where: any = {};
+    where.depositUserId = userId;
     if (itemId) {
-      where.push({ depositItemId: itemId});
+      where.depositItemId=itemId;
     }
     const depositUsers = await this.depositRepository.find({
       where

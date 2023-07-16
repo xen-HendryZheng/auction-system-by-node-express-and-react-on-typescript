@@ -1,6 +1,14 @@
 # Getting Started with Create React App
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+## Environment Variables
+
+- Create a .env file in the root directory and add environment-specific variables on new lines in the form of NAME=VALUE. For example:
+- The .env file should be gitignored. A .env.example file is provided for reference.
+
+## Backend API Services
+
+- Make sure you have your backend API ready on your local by referring to this [Auction API Services](https://github.com/xen-HendryZheng/jtr-auction-system/tree/main/backend)
 
 ## Available Scripts
 
@@ -29,18 +37,28 @@ Your app is ready to be deployed!
 
 See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
 
-### `npm run eject`
+## Project Structure
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
+- src/
+- components/ - React components
+- components/hooks/ - Custom React hooks
+- context/ - React contexts
+- services/ - Data fetching services
+- pages/ - React Main Pages
+- pages/tabs - React tab content of the main pages
+- App.tsx - App entry point
+- index.tsx - React DOM rendering
+- public/ - Static assets
 
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+## Built With
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
+- [React](https://reactjs.org/) - Front-end framework
+- [TypeScript](https://www.typescriptlang.org/) - Typed JavaScript
 
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
+## Authors
 
-## Learn More
+- [HendryZheng](https://github.com/xen-HendryZheng)
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+## License
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md) file for details.

@@ -4,13 +4,15 @@ import moment from 'moment';
 
 interface CountdownTimerProps {
     targetDateString: string;
+    stateChanged?: () => void;
 }
 
-const CountdownTimer = ({ targetDateString }: CountdownTimerProps) => {
+const CountdownTimer = ({ targetDateString, stateChanged }: CountdownTimerProps) => {
     const targetDate = moment(targetDateString).toDate();
     const [days, hours, minutes, seconds] = useCountdown(targetDate);
 
     if (days + hours + minutes + seconds <= 0) {
+        if (stateChanged) stateChanged();
         return <Badge bg="secondary">Expired</Badge>;
     } else {
         return (

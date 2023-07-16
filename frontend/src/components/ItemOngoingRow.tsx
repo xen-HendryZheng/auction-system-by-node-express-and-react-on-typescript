@@ -2,7 +2,7 @@ import { Button } from 'react-bootstrap'
 import CountdownTimer from './CountDownTimer'
 import moment from 'moment'
 import BidService from '../services/BidService'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useUserContext } from '../context/UserContext'
 
 interface Item {
@@ -24,12 +24,11 @@ interface ItemCountdown {
 }
 
 const ItemOngoingRow = ({ items, stateChanged, alertProps }: ItemProps) => {
-  const { user } = useUserContext()
-  console.log(user)
   const [disabledOptions, setDisabledOptions] = useState<number[]>([])
   const [intervalCountdown, setIntervalCountdown] = useState<ItemCountdown[]>(
     []
   )
+
   const handleBid = (item: Item) => {
     let bidPrice = prompt('Bid Price')
     if (!isNaN(parseFloat(bidPrice as string))) {
@@ -78,7 +77,7 @@ const ItemOngoingRow = ({ items, stateChanged, alertProps }: ItemProps) => {
   }
 
   const renderButtonBid = (item: Item) => {
-    if (moment(item.expired_at).isAfter(moment())) {
+    if (moment(item.expired_at).isAfter(moment().local())) {
       return (
         <Button
           size='sm'
@@ -104,7 +103,7 @@ const ItemOngoingRow = ({ items, stateChanged, alertProps }: ItemProps) => {
           <td>${item.start_price}</td>
           <td>${item.current_price}</td>
           <td>
-            <CountdownTimer targetDateString={item.expired_at} />
+            <CountdownTimer stateChanged={stateChanged} targetDateString={item.expired_at} />
           </td>
           <td>{renderButtonBid(item)}</td>
         </tr>

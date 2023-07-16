@@ -45,7 +45,7 @@ export class BidService {
         }
       });
 
-      // 2.1 Get max bidder and pop the record out from bids list
+      // 2.1 Get max bidder from bids list
       console.log(`2.1 Get max bidder and pop the record out from bids list`)
 
       const maxBidder = bids.length ? bids.shift() : undefined;
@@ -53,9 +53,11 @@ export class BidService {
       // 2.2 Get other failed bidder and refund back their money
       console.log(`2.2 Get other failed bidder and refund back their money`)
 
-      var otherFailedBidder = [...new Set(bids.map(p => p.bidUserId))];
+      const otherFailedBidder = [...new Set(bids.map(p => p.bidUserId))].filter((b) => b !== maxBidder.bidUserId);
+      
       if (bids.length) {
         otherFailedBidder.map(async (bidder) => {
+
           // 2.2.3 Get total deposit from failed bidder
           console.log(`2.2.3 Get total deposit from failed bidder`)
 
