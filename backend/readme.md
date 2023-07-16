@@ -23,6 +23,7 @@ npm install
 
 ## Project Structure 
 - src/ # Main source parent folder
+- docs/ # Source for OpenAPI Specs Yaml and other relevant document
 - controllers/ # Route controllers 
 - libs/ # Reusable libraries
 - middlewares/ # Express middlewares
@@ -97,6 +98,7 @@ This will start the backend application on port 3000;
 
 ### Built With
 - (Node.js)[https://nodejs.org/]
+- (OpenAPI / Swagger.io)[https://swagger.io/]
 - (Express)[https://expressjs.com/]
 - (TypeScript)[https://www.typescriptlang.org/]
 - (TypeORM)[https://typeorm.io/]
