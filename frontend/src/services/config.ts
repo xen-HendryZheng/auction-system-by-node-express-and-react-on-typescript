@@ -4,5 +4,6 @@ export const API_ENDPOINT = {
     REGISTER: '/auth/register',
     PROFILE: '/auth/profile',
     DEPOSIT: '/deposit',
+    BID: '/bid',
     ITEM: '/items'
 }

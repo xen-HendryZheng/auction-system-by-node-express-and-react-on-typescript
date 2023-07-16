@@ -1,36 +1,33 @@
-import { NavDropdown, Navbar, Nav, Button, Badge, Container } from 'react-bootstrap'
+import {
+  NavDropdown,
+  Navbar,
+  Nav,
+  Button,
+  Badge,
+  Container
+} from 'react-bootstrap'
 import { useUserContext } from '../context/UserContext'
-import { useEffect, useState } from 'react'
-import UserService from '../services/UserService'
+import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import DepositModal from './DepositModal'
 
-const HeaderNav = () => {
+interface HeaderNavProps {
+  balanceUser: number;
+  stateChanged: ()=> void;
+}
+
+const HeaderNav = ({balanceUser, stateChanged}: HeaderNavProps) => {
   const { user, logout } = useUserContext()
-  const [balance, setBalance] = useState(user?.balance)
-  const [showDepositModal, setShowDepositModal] = useState(false);
+
+  const [showDepositModal, setShowDepositModal] = useState(false)
   const [active, setActive] = useState('dashboard')
   const handleNavSelect = (eventKey: string | null) => {
-    console.log(eventKey)
     setActive(eventKey as string)
   }
 
-
-
-  useEffect(() => {
-    // Update the document title using the browser API
-    console.log('loaded', user)
-    if (user) {
-      console.log('call balance')
-      UserService.profile().then(res => {
-        setBalance(res.data.balance);
-      })
-    }
-  })
-
-  const navigate = useNavigate();
+  const navigate = useNavigate()
   const handleLogout = () => {
-    logout();
+    logout()
     navigate('/login', { replace: true })
   }
 
@@ -42,7 +39,11 @@ const HeaderNav = () => {
         <Navbar.Toggle aria-controls='basic-navbar-nav' />
 
         <Navbar.Collapse id='basic-navbar-nav'>
-          <Nav activeKey={active} onSelect={handleNavSelect} variant='underline'>
+          <Nav
+            activeKey={active}
+            onSelect={handleNavSelect}
+            variant='underline'
+          >
             <Nav.Link eventKey='dashboard' as={Link} to='/'>
               Bids
             </Nav.Link>
@@ -54,12 +55,17 @@ const HeaderNav = () => {
           <Nav className='ms-auto' variant='pills'>
             <Nav.Item>
               <Button variant='primary'>
-                Balance <Badge bg='secondary'>${balance}</Badge>
+                Balance <Badge bg='secondary'>${balanceUser}</Badge>
               </Button>
             </Nav.Item>
             <Nav.Item>
-              <Button onClick={()=>{setShowDepositModal(true)}} variant='warning'>
-                 Top Up (+)
+              <Button
+                onClick={() => {
+                  setShowDepositModal(true)
+                }}
+                variant='warning'
+              >
+                Top Up (+)
               </Button>
             </Nav.Item>
           </Nav>
@@ -74,9 +80,14 @@ const HeaderNav = () => {
           </Nav>
         </Navbar.Collapse>
       </Navbar>
-      <DepositModal showModal={showDepositModal} handleClose={()=>{setShowDepositModal(false)}} />
+      <DepositModal
+        showModal={showDepositModal}
+        handleClose={() => {
+          setShowDepositModal(false);
+          stateChanged();
+        }}
+      />
     </Container>
-
   )
 }
 

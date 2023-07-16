@@ -24,6 +24,7 @@ const NewItemModal = ({ showModal, handleClose }: DepositProps) => {
                 setPrice('');
                 setTimeW('');
                 setName('');
+                handleClose();
             } else {
                 setVariant('danger')
                 setMessage(`Failed to add ! ${res.data.message}`)
@@ -35,7 +36,7 @@ const NewItemModal = ({ showModal, handleClose }: DepositProps) => {
         <>
             <Modal show={showModal}>
                 <form onSubmit={handleAdd}>
-                    <Modal.Header closeButton>
+                    <Modal.Header>
                         <Modal.Title>Add New Item</Modal.Title>
                     </Modal.Header>
                     <Modal.Body>
@@ -46,7 +47,7 @@ const NewItemModal = ({ showModal, handleClose }: DepositProps) => {
                                 setName(event.target.value)
                             }}
                             className='form-control mb-3'
-                            placeholder='Enter price'
+                            placeholder='Enter Item Name'
                             required
                         />
                         <input
@@ -57,18 +58,17 @@ const NewItemModal = ({ showModal, handleClose }: DepositProps) => {
                                 setPrice(event.target.value)
                             }}
                             className='form-control mb-3'
-                            placeholder='Enter price'
+                            placeholder='Enter Start Price'
                             required
                         />
                         <input
                             type='number'
-                            step='any'
                             value={timeW}
                             onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
                                 setTimeW(event.target.value)
                             }}
                             className='form-control mb-3'
-                            placeholder='Enter time window'
+                            placeholder='Enter Time Window (Hour)'
                             required
                         />
 

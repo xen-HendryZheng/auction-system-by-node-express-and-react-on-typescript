@@ -33,8 +33,8 @@ export class Item extends BaseEntity {
     @Column({ name: 'item_end_price', type: 'decimal', nullable: true })
     itemEndPrice = 0;
 
-    @Column({ name: 'item_time_window', type: 'decimal', default: 1 })
-    itemTimeWindow = 1;
+    @Column({ name: 'item_time_window', type: 'text', nullable: true })
+    itemTimeWindow = '';
 
     @ManyToOne(() => User)
     @JoinColumn({ name: 'item_created_by', referencedColumnName: 'userId' })
@@ -51,4 +51,7 @@ export class Item extends BaseEntity {
 
     @Column({ name: 'item_published_at', type: 'timestamp with time zone', nullable: true})
     itemPublishedAt: Date | null = null;
+
+    @Column({ name: 'item_expired_at', type: 'timestamp with time zone', nullable: true})
+    itemExpiredAt: Date | null = null;
 }

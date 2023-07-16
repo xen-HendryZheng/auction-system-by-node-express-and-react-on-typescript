@@ -26,7 +26,7 @@ export class BidController{
                 bidPrice: bid_price,
                 bidUserId: user.user_id,
                 bidCreated: new Date(),
-                bidWinner: false,
+                bidFinished: false,
             });
             if (err) return next(err);
             return res.status(201).send();

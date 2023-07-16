@@ -31,6 +31,7 @@ export const ErrorCodes = {
     EMAIL_ALREADY_EXIST: 'EMAIL_ALREADY_EXIST',
     ITEM_NOT_FOUND: 'ITEM_NOT_FOUND',
     BID_TIME_OVER: 'BID_TIME_OVER',
+    BID_PRICE_LOWER_THAN_PREVIOUS: 'BID_PRICE_LOWER_THAN_PREVIOUS',
     BALANCE_NOT_ENOUGH: 'BALANCE_NOT_ENOUGH'
 };
 export const ErrorMessage: { [key: string]: string } = {
@@ -39,6 +40,7 @@ export const ErrorMessage: { [key: string]: string } = {
     EMAIL_ALREADY_EXIST: 'EMAIL_ALREADY_EXIST',
     ITEM_NOT_FOUND: 'ITEM_NOT_FOUND',
     BID_TIME_OVER: 'Your bid did not go through because the period is over',
+    BID_PRICE_LOWER_THAN_PREVIOUS: 'Your bid price is lower than the last bid price',
     BALANCE_NOT_ENOUGH: 'Your balance is not enough, please top up your balance'
 }
 export const ErrorCodeMap: { [key: string]: number } = {

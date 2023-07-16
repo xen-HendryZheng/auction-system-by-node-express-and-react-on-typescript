@@ -26,7 +26,6 @@ const LoginPage = () => {
     setPassword(event.target.value)
   }
   const { login } = useUserContext();
-  const navigate = useNavigate()
   const handleLogin = async (e: { preventDefault: () => void }) => {
     e.preventDefault();
     AuthService.login(email, password)
@@ -43,7 +42,7 @@ const LoginPage = () => {
           )
           setEmail('')
           setPassword('')
-          navigate('/', {replace: true})
+          window.location.href='/';
         } else {
           setVariant('danger')
           setMessage(`Login failed ! ${response.data.message}`)

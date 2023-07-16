@@ -10,11 +10,12 @@ export interface IItemResponse {
     item_name: string;
     start_price: number;
     current_price: number;
-    time_window: number;
+    time_window: string;
     expired_at: string;
     item_status: string;
-    created_by: number;
-    owned_by: number;
+    created_at?: string;
+    created_by?: string;
+    owned_by?: string;
 }
 
 export class ItemController {
@@ -53,11 +54,10 @@ export class ItemController {
                 item_name: item.itemName,
                 start_price: item.itemStartPrice,
                 current_price: item.itemEndPrice,
-                time_window: item.itemTimeWindow,
+                time_window: item.itemTimeWindow+' hour',
+                created_at: moment(item.itemCreated).format(),
                 expired_at: null,
-                item_status: item.itemStatus,
-                created_by: item.itemCreatedBy,
-                owned_by: item.itemUserId
+                item_status: item.itemStatus
             }
             return res.status(201).json(response);
         } catch (err) {
@@ -73,17 +73,17 @@ export class ItemController {
             let userId = own ? user.user_id : '';
             items = await this.itemService.getAllItems(itemStatus as string, userId);
             const data: IItemResponse[] = items.map(item => {
-                const expiry = moment(item.itemPublishedAt).add(item.itemTimeWindow, 'hour').format();
                 return {
                     item_id: item.itemId,
                     item_name: item.itemName,
                     start_price: item.itemStartPrice,
                     current_price: item.itemEndPrice,
                     time_window: item.itemTimeWindow,
-                    expired_at: expiry,
+                    created_at: moment(item.itemCreated).format(),
+                    expired_at: moment(item.itemExpiredAt).format(),
                     item_status: item.itemStatus,
-                    created_by: item.itemCreatedBy,
-                    owned_by: item.itemUserId
+                    created_by: item.userCreatedBy.userEmail,
+                    owned_by: item.user.userEmail
                 }
             });
             return res.status(200).json({ data })
@@ -100,17 +100,15 @@ export class ItemController {
             if (err) {
                 return next(err);
             }
-            const expiry = moment(item.itemPublishedAt).add(item.itemTimeWindow, 'hour').format();
             const response: IItemResponse = {
                 item_id: item.itemId,
                 item_name: item.itemName,
                 start_price: item.itemStartPrice,
                 current_price: item.itemEndPrice,
                 time_window: item.itemTimeWindow,
-                expired_at: expiry,
-                item_status: item.itemStatus,
-                created_by: item.itemCreatedBy,
-                owned_by: item.itemUserId
+                expired_at: moment(item.itemExpiredAt).format(),
+                created_at: moment(item.itemCreated).format(),
+                item_status: item.itemStatus
             }
             return res.status(200).json(response);
         } catch (err) {

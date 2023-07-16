@@ -1,53 +1,60 @@
+import { useEffect, useState } from 'react'
 import { Container, Row, Col, Button, Table } from 'react-bootstrap'
+import ItemService from '../services/ItemService'
+import ItemOwnedRow from '../components/ItemOwnedRow'
+import NewItemModal from '../components/NewItemModal'
 
 const MyItemPage = () => {
+  const [items, setItems] = useState([])
+  const [showModal, setShowModal] = useState(false)
+  useEffect(() => {
+    console.log('loaded owned bid tab')
+    getItems()
+  }, [])
+  const getItems = async () => {
+    const results = await ItemService.getOwnedItems()
+    console.log(results)
+    setItems(results.data.data)
+  }
+
   return (
-    <Container fluid>
-      <Row className='pt-5'>
-        <Col md={9}>
-          <Table striped bordered hover>
-            <thead>
-              <tr>
-                <th>#</th>
-                <th>Item Name</th>
-                <th>Current Price</th>
-                <th>Duration Left</th>
-                <th>Bid</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td>1</td>
-                <td>Blue Sapphire</td>
-                <td>$500</td>
-                <td>58m10s left</td>
-                <td>
-                  <Button className='btn btn-primary'>Bid</Button>
-                </td>
-              </tr>
-              <tr>
-                <td>1</td>
-                <td>Blue Sapphire</td>
-                <td>$500</td>
-                <td>58m10s left</td>
-                <td>
-                  <Button className='btn btn-primary'>Bid</Button>
-                </td>
-              </tr>
-              <tr>
-                <td>1</td>
-                <td>Blue Sapphire</td>
-                <td>$500</td>
-                <td>58m10s left</td>
-                <td>
-                  <Button className='btn btn-primary'>Bid</Button>
-                </td>
-              </tr>
-            </tbody>
-          </Table>
-        </Col>
-      </Row>
-    </Container>
+    <>
+      <Container fluid>
+        <Row className='mt-5'>
+          <Col md={3}>
+            <Button onClick={() => setShowModal(true)} className='btn-primary'>
+              Add New Item
+            </Button>
+          </Col>
+        </Row>
+        <Table className='mt-2' striped bordered hover>
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Item Name</th>
+              <th>Time Window</th>
+              <th>Status</th>
+              <th>From User</th>
+              <th>Auctioned To</th>
+              <th>Start Price</th>
+              <th>End Price</th>
+              <th>Created At</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            <ItemOwnedRow items={items} stateChanged={() => getItems()} />
+          </tbody>
+        </Table>
+      </Container>
+      <NewItemModal
+        showModal={showModal}
+        handleClose={() => {
+          getItems()
+          setShowModal(false)
+        }}
+      />
+    </>
   )
 }
 

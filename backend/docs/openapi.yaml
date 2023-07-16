@@ -327,17 +327,9 @@ components:
         - start_price
         - current_price
         - time_window
+        - created_at
         - expired_at
         - item_status
-        - created_by
-        - owned_by
-      properties:
-        item_name:
-          type: string
-        item_start_price:
-          type: number
-        item_time_window:
-          type: number
     RequestAddItem:
       type: object
       required:

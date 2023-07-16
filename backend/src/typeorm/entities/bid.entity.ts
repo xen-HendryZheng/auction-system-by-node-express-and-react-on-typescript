@@ -32,8 +32,8 @@ import {
     @Column({ name: 'bid_price', type: 'decimal' })
     bidPrice = 0;
   
-    @Column({ name: 'bid_winner', type: 'boolean', default: false })
-    bidWinner = false;
+    @Column({ name: 'bid_finished', type: 'boolean', default: false })
+    bidFinished = false;
   
     @CreateDateColumn({ name: 'bid_created', type: 'timestamp with time zone', default: () => 'CURRENT_TIMESTAMP' })
     bidCreated: Date | null = null;

@@ -1,4 +1,3 @@
-import React from 'react';
 import { useCountdown } from './hooks/CountDown';
 import { Badge } from 'react-bootstrap';
 import moment from 'moment';
@@ -16,7 +15,7 @@ const CountdownTimer = ({ targetDateString }: CountdownTimerProps) => {
     } else {
         return (
             <>
-            <h5><Badge bg="primary">{hours}h {minutes}m {seconds}s</Badge></h5>
+            <h5><Badge bg="danger">{minutes}m {seconds}s</Badge></h5>
             </>
         );
     }

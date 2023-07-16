@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
-import { Button, Table } from 'react-bootstrap'
+import { Table } from 'react-bootstrap'
 import ItemService from '../../services/ItemService'
-import ItemOngoingRow from '../../components/ItemOngoingRow';
+import ItemCompletedRow from '../../components/ItemCompletedRow';
 
 const CompletedBidTab = () => {
 
@@ -11,7 +11,7 @@ const CompletedBidTab = () => {
     getItems();
   },[])
   const getItems = async () => {
-    const results = await ItemService.getOwnedItems()
+    const results = await ItemService.getCompletedBid()
     console.log(results);
     setItems(results.data.data)
   };
@@ -22,13 +22,14 @@ const CompletedBidTab = () => {
         <tr>
           <th>#</th>
           <th>Item Name</th>
-          <th>Current Price</th>
-          <th>Duration Left</th>
-          <th>Bid</th>
+          <th>From User</th>
+          <th>Auctioned To</th>
+          <th>End Price</th>
+          <th>Completed At</th>
         </tr>
       </thead>
       <tbody>
-        <ItemOngoingRow items={items}/>
+        <ItemCompletedRow items={items}/>
       </tbody>
     </Table>
   )

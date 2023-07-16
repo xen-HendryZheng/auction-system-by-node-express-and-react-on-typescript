@@ -11,14 +11,22 @@ class ItemService {
             item_time_window
         });
     }
-    getPublishedItems = () => {
+    getOngoingBid = () => {
         return axiosInstance
             .get(API_ENDPOINT.ITEM+'?item_status=publish');
+    };
+    getCompletedBid = () => {
+        return axiosInstance
+            .get(API_ENDPOINT.ITEM+'?item_status=closed');
     };
     getOwnedItems = () => {
         return axiosInstance
             .get(API_ENDPOINT.ITEM+'?own=true');
     };
+    publishItem = (item_id: number) => {
+        return axiosInstance
+            .patch(API_ENDPOINT.ITEM,{item_id});
+    }
 }
 
 // eslint-disable-next-line import/no-anonymous-default-export

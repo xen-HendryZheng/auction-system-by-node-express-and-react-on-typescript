@@ -15,11 +15,14 @@ export class DepositService {
     return lastBalance;
   }
 
-  async getDepositByUser(userId: number): Promise<Deposit[]> {
+  async getDepositByUser(userId: number, itemId?: number): Promise<Deposit[]> {
+    const where = [];
+    where.push ({ depositUserId: userId });
+    if (itemId) {
+      where.push({ depositItemId: itemId});
+    }
     const depositUsers = await this.depositRepository.find({
-      where: {
-        depositUserId: userId
-      }
+      where
     });
     return depositUsers;
   }
@@ -31,7 +34,6 @@ export class DepositService {
       }
     });
     user.userBalance = Number(user.userBalance) + (Number(credit) - Number(debit));
-    console.log(user.userBalance);
     const updatedUser = await this.userRepository.save(user);
     return updatedUser.userBalance;
   }

@@ -24,7 +24,8 @@ export class DepositController{
             const balance = await this.depositService.createDeposit({
                 depositUserId: user.user_id,
                 depositCredit: amount,
-                depositDebit: 0
+                depositDebit: 0,
+                depositDesc: 'user-deposit'
             });
             return res.status(200).json({balance});
         } catch (err) {

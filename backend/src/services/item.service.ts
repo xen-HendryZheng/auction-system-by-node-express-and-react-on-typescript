@@ -2,6 +2,7 @@ import { ITEM_STATUS } from '../config';
 import { AppDataSource } from '../data-source';
 import { Item } from '../typeorm/entities/item.entity';
 import { ErrorCodes, StandardError } from '../libs/error';
+import moment from 'moment';
 
 export class ItemService {
   private itemRepository = AppDataSource.getRepository(Item);
@@ -21,7 +22,10 @@ export class ItemService {
         { itemCreatedBy: userId },
         { itemUserId: userId });
     }
-    return this.itemRepository.find({ where });
+    return this.itemRepository.find({ where, relations:{
+      user: true,
+      userCreatedBy: true
+    } });
   }
 
   async publishItem(itemId: number): Promise<[Item, Error]> {
@@ -33,8 +37,11 @@ export class ItemService {
     if (!foundItem) {
       return [null, new StandardError(ErrorCodes.ITEM_NOT_FOUND, 'Item Not Found', null, { itemId })]
     }
+    foundItem.itemEndPrice = foundItem.itemStartPrice;
     foundItem.itemStatus = ITEM_STATUS.PUBLISHED;
     foundItem.itemPublishedAt = new Date();
+    const expiry = moment(foundItem.itemPublishedAt).add(foundItem.itemTimeWindow, 'hour').toDate();
+    foundItem.itemExpiredAt = expiry;
     const savedItem = await this.itemRepository.save(foundItem);
     return [savedItem, null];
   }
