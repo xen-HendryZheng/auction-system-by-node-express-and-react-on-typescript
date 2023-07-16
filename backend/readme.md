@@ -21,6 +21,20 @@ npm install
 ## Database Table
 ![Database Schme](./docs/ERD.jpg)
 
+## Project Structure 
+- src/ # Main source parent folder
+- controllers/ # Route controllers 
+- libs/ # Reusable libraries
+- middlewares/ # Express middlewares
+- services/ # Business logic and Data Fetching
+- typeorm/ # TypeORM config
+- workers/ # Background workers
+- app.ts # Express app
+- config.ts # Environment variables 
+- connect.ts # Database connection
+- data-source.ts # TypeORM data source
+- init.ts # App initialization
+- server.ts # HTTP server start
 
 ### Docker Configuration
 
@@ -79,5 +93,14 @@ docker-compose up
 npm run migration:run
 ```
 
-This will start the backend application on port 3006.
-◊
+This will start the backend application on port 3000;
+
+### Built With
+- (Node.js)[https://nodejs.org/]
+- (Express)[https://expressjs.com/]
+- (TypeScript)[https://www.typescriptlang.org/]
+- (TypeORM)[https://typeorm.io/]
+- (PostgreSQL)[https://www.postgresql.org/]
+## Authors
+
+- [HendryZheng](https://github.com/xen-HendryZheng)
