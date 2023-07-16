@@ -53,7 +53,7 @@ The frontend is built using React and TypeScript. The `package.json` file contai
 - [TypeScript](https://www.typescriptlang.org/) - Typed JavaScript
 
 ### Guide
-You can find full guide for the frontend setup in the [Frontend Readme](./frontend/readme.md)
+You can find full guide for the frontend setup in the [Frontend Readme](./frontend/README.md)
 
 ## Authors
 
