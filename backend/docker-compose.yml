@@ -11,6 +11,8 @@ services:
     volumes:
       - ./postgres-data:/var/lib/postgresql/data
   web:
+    env_file:
+    - .env
     build:
       context: .
       dockerfile: dev.Dockerfile
@@ -18,7 +20,7 @@ services:
       - postgres
     container_name: jtr-auction-express
     ports:
-      - 3000:3000
+      - "${PORT}:${PORT}"
     environment:
       - PGHOST=postgres
       - PGHOST_MIGRATION=postgres
