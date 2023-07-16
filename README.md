@@ -37,6 +37,12 @@ The backend is composed of two services: `postgres` and `web`.
   - PGHOST_MIGRATION: postgres
 - Volumes:
   - ./:/app
+  
+
+### Environment Variables
+
+The required environment variables can be found in the `.env.example` file. Create a new `.env` file and copy the contents from `.env.example`. Modify the values of the variables as needed.
+
 
 ### First-time Setup
 

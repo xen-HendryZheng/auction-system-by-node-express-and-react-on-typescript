@@ -60,8 +60,8 @@ export class BidService {
           console.log(`2.2.3 Get total deposit from failed bidder`)
 
           const depositList = (await this.depositService.getDepositByUser(bidder, item.itemId)).map((deposit) => { return deposit.depositDebit });
-          const sumDebitAmount = depositList.reduce((sum, debit) => {
-            return sum + debit;
+          const sumDebitAmount: number = depositList.reduce((sum, debit) => {
+            return Number(sum) + Number(debit);
           });
 
           // 2.2.3 Refund back the bidded amount to the failed bidder
@@ -80,8 +80,8 @@ export class BidService {
       console.log(`2.3. Process winner bid`)
       if (maxBidder) {
         const depositList = (await this.depositService.getDepositByUser(maxBidder.bidUserId, item.itemId)).map((deposit) => { return deposit.depositDebit });
-        const sumDebitAmount = depositList.reduce((sum, debit) => {
-          return sum + debit;
+        const sumDebitAmount: number = depositList.reduce((sum, debit) => {
+          return Number(sum) + Number(debit);
         });
 
         // 2.3.1. Return back original bid amount first before deduct the last amount from bid winner
