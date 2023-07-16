@@ -2,8 +2,7 @@ import { Button } from 'react-bootstrap'
 import CountdownTimer from './CountDownTimer'
 import moment from 'moment'
 import BidService from '../services/BidService'
-import { useContext, useState } from 'react'
-import AlertMsg from './Alert'
+import { useState } from 'react'
 import { useUserContext } from '../context/UserContext'
 
 interface Item {
@@ -61,6 +60,7 @@ const ItemOngoingRow = ({ items, stateChanged, alertProps }: ItemProps) => {
             stateChanged()
           } else {
             console.log(res)
+            alertProps('danger', res.data.message);
           }
         })
         .catch(error => {
