@@ -4,6 +4,8 @@ info:
   title: 'Auction System Swagger Docs'
   description: 'Auction System Swagger Docs for Jitera'
 servers:
+  - description: Live API
+    url: 'https://jitera-backend.hendryzheng.com/'
   - description: Local development
     url: 'http://localhost:3000'
 paths:
