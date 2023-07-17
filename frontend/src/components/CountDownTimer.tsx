@@ -17,7 +17,7 @@ const CountdownTimer = ({ targetDateString, stateChanged }: CountdownTimerProps)
     } else {
         return (
             <>
-            <h5><Badge bg="danger">{minutes}m {seconds}s</Badge></h5>
+            <h5><Badge bg="danger">{hours}h {minutes}m {seconds}s</Badge></h5>
             </>
         );
     }
