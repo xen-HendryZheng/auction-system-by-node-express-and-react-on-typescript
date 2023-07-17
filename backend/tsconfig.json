@@ -1,7 +1,7 @@
 {
   "compilerOptions": {
     "target": "es6",
-    "types": ["reflect-metadata", "node", "express"],
+    "types": ["jest", "reflect-metadata", "node", "express"],
     "allowJs": true,
     "module": "commonjs",
     "moduleResolution": "node",
@@ -15,7 +15,7 @@
       "es5",
       "es6"
    ],
-    "rootDir": "src",
+    "rootDir": ".",
     "baseUrl": ".",
     "strict": true,
     "strictNullChecks": false,

@@ -28,13 +28,13 @@ const RegisterPage = () => {
         if (response.status < 300) {
           setVariant('success')
           setMessage(
-            `Registration successful! Your email ${email} has been registered. You may login now, we will redirect you to login page in 10s`
+            `Registration successful! Your email ${email} has been registered. You may login now, we will redirect you to login page in 3s`
           )
           setEmail('')
           setPassword('')
           setTimeout(() => {
             navigate('/',{state: {emailRegistered: email}})
-          }, 10000)
+          }, 3000)
         } else {
           setVariant('danger')
           setMessage(`Registration failed ! ${response.data.message}`)

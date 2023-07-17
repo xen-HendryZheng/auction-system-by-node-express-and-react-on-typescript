@@ -6,16 +6,17 @@ import { ErrorCodes, StandardError } from '../libs/error';
 import { ITEM_STATUS } from '../config';
 import { User } from '../typeorm/entities/user.entity';
 import { getUserSession } from '../libs/context-session';
-import { Deposit } from 'src/typeorm/entities/deposit.entity';
 import { DepositService } from './deposit.service';
-import { In, LessThan, MoreThan, Not } from 'typeorm';
+import { LessThan, QueryRunner } from 'typeorm';
 
 export class BidService {
 
   private readonly depositService: DepositService;
+  private queryRunner: QueryRunner;
 
   constructor(depositService: DepositService) {
     this.depositService = depositService;
+    this.queryRunner = AppDataSource.createQueryRunner();
   }
 
   private bidRepository = AppDataSource.getRepository(Bid);
@@ -54,27 +55,34 @@ export class BidService {
       console.log(`2.2 Get other failed bidder and refund back their money`)
 
       const otherFailedBidder = [...new Set(bids.map(p => p.bidUserId))].filter((b) => b !== maxBidder.bidUserId);
-      
+
       if (bids.length) {
         otherFailedBidder.map(async (bidder) => {
+          await this.queryRunner.startTransaction();
+          try {
+            // 2.2.3 Get total deposit from failed bidder
+            console.log(`2.2.3 Get total deposit from failed bidder`)
 
-          // 2.2.3 Get total deposit from failed bidder
-          console.log(`2.2.3 Get total deposit from failed bidder`)
+            const depositList = (await this.depositService.getDepositByUser(bidder, item.itemId)).map((deposit) => { return deposit.depositDebit });
+            const sumDebitAmount: number = depositList.reduce((sum, debit) => {
+              return Number(sum) + Number(debit);
+            });
 
-          const depositList = (await this.depositService.getDepositByUser(bidder, item.itemId)).map((deposit) => { return deposit.depositDebit });
-          const sumDebitAmount: number = depositList.reduce((sum, debit) => {
-            return Number(sum) + Number(debit);
-          });
+            // 2.2.3 Refund back the bidded amount to the failed bidder
+            console.log(`2.2.3 Refund back the bidded amount to the failed bidder`)
 
-          // 2.2.3 Refund back the bidded amount to the failed bidder
-          console.log(`2.2.3 Refund back the bidded amount to the failed bidder`)
+            await this.depositService.createDeposit({
+              depositUserId: bidder,
+              depositCredit: sumDebitAmount,
+              depositDebit: 0,
+              depositDesc: `Refund back for lose auction for item ${item.itemId}-${item.itemName} `
+            });
+          } catch (err) {
+            await this.queryRunner.rollbackTransaction();
+          } finally {
+            await this.queryRunner.release();
+          }
 
-          await this.depositService.createDeposit({
-            depositUserId: bidder,
-            depositCredit: sumDebitAmount,
-            depositDebit: 0,
-            depositDesc: `Refund back for lose auction for item ${item.itemId}-${item.itemName} `
-          });
         });
       }
 
@@ -85,29 +93,37 @@ export class BidService {
         const sumDebitAmount: number = depositList.reduce((sum, debit) => {
           return Number(sum) + Number(debit);
         });
+        await this.queryRunner.startTransaction();
+        try {
+          // 2.3.1. Return back original bid amount first before deduct the last amount from bid winner
+          console.log(`2.3.1. Return back original bid amount first before deduct the last amount from bid winner`)
+          await this.depositService.createDeposit({
+            depositUserId: maxBidder.bidUserId,
+            depositCredit: sumDebitAmount,
+            depositDebit: 0,
+            depositDesc: `Refund bid amount auction for item ${item.itemId}-${item.itemName} `
+          });
 
-        // 2.3.1. Return back original bid amount first before deduct the last amount from bid winner
-        console.log(`2.3.1. Return back original bid amount first before deduct the last amount from bid winner`)
-        await this.depositService.createDeposit({
-          depositUserId: maxBidder.bidUserId,
-          depositCredit: sumDebitAmount,
-          depositDebit: 0,
-          depositDesc: `Refund bid amount auction for item ${item.itemId}-${item.itemName} `
-        });
+          // 2.3.1. Deduct bid winner based on max bidded amount
+          console.log(`2.3.1. Deduct bid winner based on max bidded amount`)
+          await this.depositService.createDeposit({
+            depositUserId: maxBidder.bidUserId,
+            depositCredit: 0,
+            depositDebit: maxBidder.bidPrice,
+            depositDesc: `Deduct balance for winning auction for item ${item.itemId}-${item.itemName} `
+          });
 
-        // 2.3.1. Deduct bid winner based on max bidded amount
-        console.log(`2.3.1. Deduct bid winner based on max bidded amount`)
-        await this.depositService.createDeposit({
-          depositUserId: maxBidder.bidUserId,
-          depositCredit: 0,
-          depositDebit: maxBidder.bidPrice,
-          depositDesc: `Deduct balance for winning auction for item ${item.itemId}-${item.itemName} `
-        });
+          // 2.3.2. Lastly Transfer item to the winner
+          console.log(`2.3.2. Lastly Transfer item to the winner`, { item_id: item.itemId })
+          item.itemUserId = maxBidder.bidUserId;
+          await item.save();
+        } catch (err) {
 
-        // 2.3.2. Lastly Transfer item to the winner
-        console.log(`2.3.2. Lastly Transfer item to the winner`,{item_id: item.itemId})
-        item.itemUserId = maxBidder.bidUserId;
-        await item.save();
+        } finally {
+
+        }
+
+
       }
     });
 
@@ -127,6 +143,8 @@ export class BidService {
   };
 
   async createBid(bidData: Partial<Bid>): Promise<Error> {
+
+
     const item = await this.itemRepository.findOne({
       where: {
         itemId: bidData.bidItemId,
@@ -149,34 +167,47 @@ export class BidService {
     }
 
     const expiry = moment(item.itemPublishedAt).add(item.itemTimeWindow, 'hour');
-    if (moment().isBefore(expiry)) {
 
-      const lastMaxBid = await this.getLastMaxBid(item.itemId);
+    // Begin transaction to prevent race condition of same bid from multiple users
+    await this.queryRunner.startTransaction();
+    try {
+      if (moment().isBefore(expiry)) {
 
-      if (lastMaxBid > bidData.bidPrice) {
-        return new StandardError(ErrorCodes.BID_TIME_OVER, `Your bid price is lower than the last bid price. Please put higher than $${lastMaxBid}`);
+        const lastMaxBid = await this.getLastMaxBid(item.itemId);
+
+        if (lastMaxBid > bidData.bidPrice) {
+          return new StandardError(ErrorCodes.BID_TIME_OVER, `Your bid price is lower than the last bid price. Please put higher than $${lastMaxBid}`);
+        }
+
+        const lastBalance = await this.depositService.createDeposit({
+          depositItemId: item.itemId,
+          depositUserId: bidData.bidUserId,
+          depositCredit: 0,
+          depositDebit: bidData.bidPrice,
+          depositDesc: `Temporary deposit for bid ${item.itemId} - ${item.itemName}`
+        });
+
+        console.log(`Successfully deposit ${item.itemId} for bid ${bidData.bidPrice}, last balance: ${lastBalance}`);
+
+        const newBid = this.bidRepository.create(bidData);
+        await this.bidRepository.save(newBid);
+
+        item.itemEndPrice = newBid.bidPrice;
+        await this.itemRepository.save(item);
+
+        // commit transaction now:
+        await this.queryRunner.commitTransaction()
+
+        return null;
+      } else {
+        return new StandardError(ErrorCodes.BID_TIME_OVER, null);
       }
-
-      const lastBalance = await this.depositService.createDeposit({
-        depositItemId: item.itemId,
-        depositUserId: bidData.bidUserId,
-        depositCredit: 0,
-        depositDebit: bidData.bidPrice,
-        depositDesc: `Temporary deposit for bid ${item.itemId} - ${item.itemName}`
-      });
-
-      console.log(`Successfully deposit ${item.itemId} for bid ${bidData.bidPrice}, last balance: ${lastBalance}`);
-
-      const newBid = this.bidRepository.create(bidData);
-      await this.bidRepository.save(newBid);
-
-      item.itemEndPrice = newBid.bidPrice;
-      await this.itemRepository.save(item);
-
-      return null;
-    } else {
-      return new StandardError(ErrorCodes.BID_TIME_OVER, null);
+    } catch (err) {
+      await this.queryRunner.rollbackTransaction()
+    } finally {
+      await this.queryRunner.release()
     }
+
 
   }
 
