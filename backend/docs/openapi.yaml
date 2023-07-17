@@ -289,12 +289,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error404Response'
-        422:
-          description: example error 422 response
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error422Response'
         500:
           description: example error 500 response
           content:
@@ -355,6 +349,11 @@ components:
       required:
         - bid_item_id
         - bid_price
+      properties:
+        bid_item_id:
+          type: number
+        bid_price:
+          type: number
     Auth:
       type: object
       required:
@@ -428,21 +427,6 @@ components:
           enum:
             - USER_NOT_FOUND
             - ITEM_NOT_FOUND
-        message:
-          type: string
-        errors:
-          $ref: '#/components/schemas/ArrayOfErrors'
-    Error422Response:
-      type: object
-      required:
-        - error_code
-        - message
-      properties:
-        error_code:
-          type: string
-          enum:
-            - GENERATE_CHECKOUT_URL_ERROR
-            - DUPLICATE_PAYMENT_ERROR
         message:
           type: string
         errors:
