@@ -5,7 +5,7 @@ This repository contains the backend and frontend setup for the Auction System.
 ## Live Preview
 You can find live preview with the following link:
 - Auction System Demo : [d3ryzw9q3nhlvi.cloudfront.net](https://d3ryzw9q3nhlvi.cloudfront.net/login)
-- Backend API Doc : [http://jitera-backend.hendryzheng.com:8080](http://jitera-backend.hendryzheng.com:8080)
+- Backend API Doc : [https://jitera-backend.hendryzheng.com/api-docs](https://jitera-backend.hendryzheng.com/api-docs)
 - API Endpoint : [https://jitera-backend.hendryzheng.com](https://jitera-backend.hendryzheng.com)
 
 ## Infrastructure Setup

@@ -1,5 +1,7 @@
 import 'reflect-metadata';
 import express, { Application } from 'express';
+import * as swaggerUi from 'swagger-ui-express';
+import * as YAML from 'yamljs';
 import * as OpenApiValidator from 'express-openapi-validator';
 import { init } from './init';
 import { errorHandler } from './middlewares/handle-error';
@@ -14,7 +16,7 @@ async function setupRoutes(app: Application) {
     app.use('/bid', bidController.getRouter())
     app.use('/healthcheck', healthcheckController.getRouter());
 
-}
+} 
 
 export async function createApp(): Promise<Application> {
     const app = express();
@@ -22,7 +24,9 @@ export async function createApp(): Promise<Application> {
     app.use(httpContext.middleware);
     // Enable JSON body parsing
     app.use(express.json());
-
+    // Load OpenAPI specification from YAML file
+    const swaggerDocument = YAML.load('./docs/openapi.yaml');
+    app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
     // Initialize OpenAPI validator
     app.use(
         OpenApiValidator.middleware({
