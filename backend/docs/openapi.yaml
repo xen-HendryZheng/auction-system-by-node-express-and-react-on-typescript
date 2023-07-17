@@ -204,7 +204,7 @@ paths:
         content:
           application/json:
             schema:
-                $ref: '#/components/schemas/Bid'
+                $ref: '#/components/schemas/RequestBid'
       responses:
         201:
           description: OK
@@ -344,7 +344,7 @@ components:
       properties:
         item_id:
           type: number
-    Bid:
+    RequestBid:
       type: object
       required:
         - bid_item_id
