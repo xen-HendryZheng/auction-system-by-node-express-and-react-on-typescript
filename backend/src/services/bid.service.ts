@@ -168,21 +168,22 @@ export class BidService {
 
     const expiry = moment(item.itemPublishedAt).add(item.itemTimeWindow, 'hour');
 
-    // Begin transaction to prevent race condition of same bid from multiple users
-    await this.queryRunner.startTransaction();
-    try {
-      if (moment().isBefore(expiry)) {
 
-        let lastMaxBid = await this.getLastMaxBid(item.itemId);
-        if (lastMaxBid === 0) {
-          // If first time bid, get start price;
-          lastMaxBid = Number(item.itemEndPrice);
-        }
+    if (moment().isBefore(expiry)) {
+      let lastMaxBid = await this.getLastMaxBid(item.itemId);
+      if (lastMaxBid === 0) {
+        // If first time bid, get start price;
+        lastMaxBid = Number(item.itemStartPrice);
+      }
 
-        if (lastMaxBid >= bidData.bidPrice) {
-          return new StandardError(ErrorCodes.BID_TIME_OVER, `Your bid price is lower than the last bid price. Please put higher than $${lastMaxBid}`);
-        }
+      if (lastMaxBid >= bidData.bidPrice) {
+        return new StandardError(ErrorCodes.BID_TIME_OVER, `Your bid price is lower than the last bid price. Please put higher than $${lastMaxBid}`);
+      }
 
+      try {
+
+        // Begin transaction to prevent race condition of same bid from multiple users
+        await this.queryRunner.startTransaction();
         const lastBalance = await this.depositService.createDeposit({
           depositItemId: item.itemId,
           depositUserId: bidData.bidUserId,
@@ -203,13 +204,14 @@ export class BidService {
         await this.queryRunner.commitTransaction()
 
         return null;
-      } else {
-        return new StandardError(ErrorCodes.BID_TIME_OVER, null);
+
+      } catch (err) {
+        await this.queryRunner.rollbackTransaction()
+      } finally {
+        await this.queryRunner.release()
       }
-    } catch (err) {
-      await this.queryRunner.rollbackTransaction()
-    } finally {
-      await this.queryRunner.release()
+    } else {
+      return new StandardError(ErrorCodes.BID_TIME_OVER, null);
     }
 
 
