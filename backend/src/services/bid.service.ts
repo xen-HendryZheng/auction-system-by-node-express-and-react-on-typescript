@@ -207,9 +207,7 @@ export class BidService {
 
       } catch (err) {
         await this.queryRunner.rollbackTransaction()
-      } finally {
-        await this.queryRunner.release()
-      }
+      } 
     } else {
       return new StandardError(ErrorCodes.BID_TIME_OVER, null);
     }
