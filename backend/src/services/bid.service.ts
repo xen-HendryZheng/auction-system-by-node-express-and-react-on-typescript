@@ -176,10 +176,10 @@ export class BidService {
         let lastMaxBid = await this.getLastMaxBid(item.itemId);
         if (lastMaxBid === 0) {
           // If first time bid, get start price;
-          lastMaxBid = Number(item.itemStartPrice);
+          lastMaxBid = Number(item.itemEndPrice);
         }
 
-        if (lastMaxBid > bidData.bidPrice) {
+        if (lastMaxBid >= bidData.bidPrice) {
           return new StandardError(ErrorCodes.BID_TIME_OVER, `Your bid price is lower than the last bid price. Please put higher than $${lastMaxBid}`);
         }
 

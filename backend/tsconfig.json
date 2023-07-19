@@ -15,7 +15,7 @@
       "es5",
       "es6"
    ],
-    "rootDir": ".",
+    "rootDir": "src",
     "baseUrl": ".",
     "strict": true,
     "strictNullChecks": false,
@@ -24,6 +24,6 @@
     "skipLibCheck": true,
     "noImplicitThis": true,
   },
-  "include": ["src/**/*.ts", "tests/**/*.ts"],
+  "include": ["src/**/*.ts"],
   "exclude": ["node_modules", ".vscode"],
 }
