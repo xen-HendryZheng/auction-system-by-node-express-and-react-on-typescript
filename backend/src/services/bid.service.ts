@@ -58,7 +58,6 @@ export class BidService {
 
       if (bids.length) {
         otherFailedBidder.map(async (bidder) => {
-          await this.queryRunner.startTransaction();
           try {
             // 2.2.3 Get total deposit from failed bidder
             console.log(`2.2.3 Get total deposit from failed bidder`)
@@ -78,9 +77,7 @@ export class BidService {
               depositDesc: `Refund back for lose auction for item ${item.itemId}-${item.itemName} `
             });
           } catch (err) {
-            await this.queryRunner.rollbackTransaction();
-          } finally {
-            await this.queryRunner.release();
+            console.log(err);
           }
 
         });
@@ -93,8 +90,8 @@ export class BidService {
         const sumDebitAmount: number = depositList.reduce((sum, debit) => {
           return Number(sum) + Number(debit);
         });
-        await this.queryRunner.startTransaction();
         try {
+          await this.queryRunner.startTransaction();
           // 2.3.1. Return back original bid amount first before deduct the last amount from bid winner
           console.log(`2.3.1. Return back original bid amount first before deduct the last amount from bid winner`)
           await this.depositService.createDeposit({
@@ -117,13 +114,11 @@ export class BidService {
           console.log(`2.3.2. Lastly Transfer item to the winner`, { item_id: item.itemId })
           item.itemUserId = maxBidder.bidUserId;
           await item.save();
+          // commit transaction now:
+          await this.queryRunner.commitTransaction();
         } catch (err) {
-
-        } finally {
-
-        }
-
-
+          await this.queryRunner.rollbackTransaction();
+        } 
       }
     });
 
