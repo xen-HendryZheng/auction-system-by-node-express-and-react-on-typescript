@@ -30,6 +30,10 @@ export class BidService {
         { itemStatus: ITEM_STATUS.PUBLISHED, itemExpiredAt: LessThan(new Date()) },
       ]
     });
+    if (!publishedItem.length) {
+      console.log(`SKIPPED - No Published Item yet`)
+      return;
+    }
     console.log(`1. Get list of published item and ended auction, publishedItem.length=`, publishedItem.length)
 
     // 2. Loop each ended auction item
