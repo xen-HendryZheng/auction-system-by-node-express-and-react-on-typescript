@@ -173,7 +173,11 @@ export class BidService {
     try {
       if (moment().isBefore(expiry)) {
 
-        const lastMaxBid = await this.getLastMaxBid(item.itemId);
+        let lastMaxBid = await this.getLastMaxBid(item.itemId);
+        if (lastMaxBid === 0) {
+          // If first time bid, get start price;
+          lastMaxBid = Number(item.itemStartPrice);
+        }
 
         if (lastMaxBid > bidData.bidPrice) {
           return new StandardError(ErrorCodes.BID_TIME_OVER, `Your bid price is lower than the last bid price. Please put higher than $${lastMaxBid}`);
