@@ -4,7 +4,7 @@ This repository contains the backend and frontend setup for the Auction System.
 
 
 ## Full Architecture
-To understand better about the full architecture of this demo, please look at below diagram
+If you would like to get this deployed in AWS Infrastructure, you may want to consider this architecture.
 ![Diagram](./Docs/Full-Architecture.jpg)
 ## Backend
 
