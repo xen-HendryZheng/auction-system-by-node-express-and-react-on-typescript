@@ -1,4 +1,4 @@
-## Auction System - Backend and Frontend Setup
+## Auction System Running on Node Express (Typescript) and React (Typescript) - Backend and Frontend Setup
 
 This repository contains the backend and frontend setup for the Auction System.
 
